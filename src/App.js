@@ -1,162 +1,190 @@
 import React, { useState } from "react";
-import "./App.css";
+import {
+  Container,
+  Row,
+  Col,
+  Form,
+  ListGroup,
+  Badge,
+  Button,
+} from "react-bootstrap";
 import axios from "axios";
-
-const RenderContents = ({ baseUrl, contents }) => {
-  const [data, setData] = useState(contents);
-  const getRepositoryContents = async (content, path, i) => {
-    await axios
-      .get(`${baseUrl()}/contents/${path}`, {
-        headers: {
-          Accept: "application/vnd.github.v3+json",
-        },
-      })
-      .then((res) => {
-        const updatedData = [...data];
-        updatedData[i].files = res.data;
-        setData(updatedData);
-      });
-  };
-  return (
-    <>
-      <ol>
-        {data.map((content, i) => (
-          <li key={content.sha}>
-            {content.type === "file" && (
-              <>
-                <a href={content.html_url} target="_blank" rel="noreferrer">
-                  {content.name}
-                </a>
-              </>
-            )}
-            {content.type === "dir" && (
-              <>
-                <button
-                  onClick={() =>
-                    getRepositoryContents(content, content.path, i)
-                  }
-                >
-                  {content.name}
-                </button>
-                {content?.files && (
-                  <RenderContents baseUrl={baseUrl} contents={content?.files} />
-                )}
-              </>
-            )}
-          </li>
-        ))}
-      </ol>
-    </>
-  );
-};
+import "./App.css";
+import dataSource from "./dataSource.json";
 
 function App() {
-  const [formData, setFormData] = useState({
-    owner: "dineshchn23",
-    repo: "task-tracker",
+  const [providers] = useState(dataSource.providersList);
+  const [servicesActualData] = useState(dataSource.serviceList);
+  const [services, setServices] = useState(dataSource.serviceList);
+  const [formData, setformData] = useState({
+    provider: dataSource.providersList[0].value,
+    services: [],
   });
-  const [repoList, setRepoList] = useState([]);
-  const [repoDetails, setRepoDetails] = useState({});
 
-  const onChangeHandler = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const onProviderChangeHandler = (e) => {
+    setformData({ ...formData, provider: e.target.value, services: [] });
+    const tempServices = { ...services };
+    tempServices[e.target.value].forEach((service) => {
+      service.checked = false;
+    });
+    setServices(tempServices);
   };
 
-  const baseUrl = () =>
-    `https://api.github.com/repos/${formData.owner}/${formData.repo}`;
-
-  const getRepositories = async (e) => {
-    // for authentication
-    // const USERNAME = "dineshchn23";
-    // const PASSWORD = "{password}";
-    // await axios.get("https://api.github.com", {
-    //   headers: {
-    //     authorization: `basic ${Buffer.from(`${USERNAME}:${PASSWORD}`).toString(
-    //       "base64"
-    //     )}`,
-    //   },
-    // });
-    await axios
-      .get(`https://api.github.com/users/${formData.owner}/repos`, {
-        headers: {
-          Accept: "application/vnd.github.v3+json",
-        },
-      })
-      .then((res) => {
-        setRepoList(res.data);
-      });
+  const onServiceChangeHandler = (e, id) => {
+    const temp = { ...services };
+    const tempIndex = temp[formData.provider].findIndex(
+      (item) => item.id === id
+    );
+    const tempItem = temp[formData.provider][tempIndex];
+    tempItem.checked = !tempItem.checked;
+    setServices(temp);
+    const tempServices = [...formData.services];
+    if (tempItem.checked) {
+      tempServices.push(tempItem);
+      setformData({ ...formData, services: tempServices });
+    } else {
+      const tempServiceIndex = tempServices.findIndex(
+        (tempService) => tempService.id === tempItem.id
+      );
+      tempServices.splice(tempServiceIndex, 1);
+      setformData({ ...formData, services: tempServices });
+    }
   };
 
-  const getRepositoryDetails = async (e) => {
-    onChangeHandler(e);
-    if (e.target.value)
-      await axios
-        .get(
-          `https://api.github.com/repos/${formData.owner}/${e.target.value}`,
-          {
-            headers: {
-              Accept: "application/vnd.github.v3+json",
-            },
-          }
-        )
-        .then((res) => {
-          setRepoDetails(res.data);
-        });
-    else setRepoDetails({});
+  const onClearAllHandler = () => {
+    setformData({ ...formData, services: [] });
+    const tempServices = { ...services };
+    tempServices[formData.provider].forEach((service) => {
+      if (service.checked) service.checked = false;
+    });
+    setServices(tempServices);
   };
 
-  const getRepositoryContents = async (content, path) => {
-    await axios
-      .get(
-        `https://api.github.com/repos/${formData.owner}/${formData.repo}/contents`,
-        {
-          headers: {
-            Accept: "application/vnd.github.v3+json",
-          },
-        }
-      )
-      .then((res) => setRepoDetails({ ...repoDetails, contents: res.data }));
+  const onRemoveSelectedService = (id) => {
+    onServiceChangeHandler(null, id);
+  };
+
+  const onSearchHandler = (e) => {
+    const value = e.target.value;
+    if (value.length > 2) {
+      const temp = { ...servicesActualData };
+      const tempItems = temp[formData.provider];
+      const tempSearchResult = tempItems.filter(
+        (item) =>
+          item.name.toLowerCase().indexOf(e.target.value.toLowerCase()) > -1
+      );
+      setServices({ ...services, [formData.provider]: tempSearchResult });
+    }
+    if (value.length === 0) {
+      setServices(servicesActualData);
+    }
+  };
+
+  const generateCodeHandler = async () => {
+    window.location.href =
+      "https://api.github.com/repos/hashicorp/terraform/zipball";
   };
 
   return (
-    <div className="App">
-      <p>Enter any valid GitHub username to get started!!!</p>
-      <label for="owner">Enter username: </label>
-      <input
-        type="text"
-        name="owner"
-        id="owner"
-        value={formData.owner}
-        onChange={(e) => onChangeHandler(e)}
-      />
-      &nbsp;<button onClick={(e) => getRepositories()}>Submit</button>
-      <br></br>
-      {repoList.length > 0 && (
-        <>
-          <label for="owner">Select Repository: </label>
-          <select
-            name="repo"
-            placeholder="Select one repo"
-            onChange={(e) => getRepositoryDetails(e)}
-          >
-            <option value="">Select</option>
-            {repoList.map((repo) => (
-              <option value={repo.name}>{repo.name}</option>
+    <Container className="App pt-4">
+      <h1>
+        <strong>Terraform Initializer</strong>
+      </h1>
+      <hr></hr>
+      <Row>
+        <Col xs={4} className="border-right">
+          <h4 className="mb-3">
+            <b>Providers</b>
+          </h4>
+          {providers.map((provider, index) => (
+            <Form.Check
+              className="mb-2"
+              key={provider.id}
+              type="radio"
+              label={provider.name}
+              name="provider"
+              value={provider.value}
+              checked={provider.value === formData.provider}
+              onChange={(e) => onProviderChangeHandler(e)}
+            />
+          ))}
+        </Col>
+        <Col xs={8} className="px-4">
+          <h4>
+            <b>Services</b>
+          </h4>
+          {formData.services.length > 0 && (
+            <p>
+              <small>Total selected: {formData.services.length}</small>
+            </p>
+          )}
+          <div className="mb-2">
+            {formData.services.map(
+              (service, i) =>
+                service.checked && (
+                  <Badge
+                    pill
+                    className="mx-1 mb-1 px-4 border-darks"
+                    bg="primary"
+                    text="light"
+                    key={service.id}
+                  >
+                    <span className="mx-2">{service.name}</span>
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onClick={() => onRemoveSelectedService(service.id)}
+                    >
+                      <i className="bi bi-x-lg"></i>
+                    </Button>
+                  </Badge>
+                )
+            )}
+            {formData.services.length > 0 && (
+              <Button
+                variant="link"
+                size="sm"
+                onClick={() => onClearAllHandler()}
+              >
+                Clear All
+              </Button>
+            )}
+          </div>
+          <Form.Control
+            className="mb-2"
+            type="text"
+            placeholder="Type to begin search.."
+            onChange={(e) => onSearchHandler(e)}
+          />
+          <ListGroup>
+            {services[formData.provider].map((service, i) => (
+              <ListGroup.Item className="py-3" key={service.id}>
+                <Form.Check
+                  checked={service.checked}
+                  inline
+                  aria-label={service.name}
+                  name={`service-${service.name}`}
+                  onChange={(e) => onServiceChangeHandler(e, service.id)}
+                  label={service.name}
+                />
+              </ListGroup.Item>
             ))}
-          </select>
-        </>
-      )}
-      {repoDetails.full_name && (
-        <>
-          <hr></hr>
-          <h3>Fullname: {repoDetails.full_name}</h3>
-          <button onClick={() => getRepositoryContents()}>Get Contents</button>
-        </>
-      )}
-      {repoDetails.contents && (
-        <RenderContents baseUrl={baseUrl} contents={repoDetails.contents} />
-      )}
-    </div>
+          </ListGroup>
+          <Button
+            variant={`${
+              formData.services.length === 0
+                ? "outline-dark"
+                : "outline-primary"
+            }`}
+            disabled={formData.services.length === 0}
+            className="w-50 my-5 py-2 mx-auto"
+            onClick={(e) => generateCodeHandler(e)}
+          >
+            Generate Code
+          </Button>
+        </Col>
+      </Row>
+    </Container>
   );
 }
 

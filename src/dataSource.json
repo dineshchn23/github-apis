@@ -1,0 +1,149 @@
+{
+  "providersList": [
+    {
+      "name": "GCP",
+      "value": "gcp",
+      "id": 1,
+      "checked": true
+    },
+    {
+      "name": "AWS",
+      "value": "aws",
+      "id": 2
+    },
+    {
+      "name": "Azure",
+      "value": "azure",
+      "id": 3
+    }
+  ],
+
+  "serviceList": {
+    "gcp": [
+      {
+        "name": "Networking: Google Virtual Private Cloud (VPC)",
+        "id": 1
+      },
+      {
+        "name": "Networking: Content Delivery Network",
+        "id": 2
+      },
+      {
+        "name": "Storage and Databases: Cloud SQL",
+        "id": 3
+      },
+      {
+        "name": "Storage and Databases: Cloud Bigtable",
+        "id": 4
+      },
+      {
+        "name": "Big Data: Google BigQuery",
+        "id": 5
+      },
+      {
+        "name": "Big Data: Google Cloud Dataproc",
+        "id": 6
+      },
+      {
+        "name": "Machine Learning: Cloud Machine Learning",
+        "id": 7
+      },
+      {
+        "name": "Machine Learning: Vision API",
+        "id": 8
+      },
+      {
+        "name": "Developer Tools: Cloud SDK",
+        "id": 9
+      },
+      {
+        "name": "Developer Tools: Deployment Manager",
+        "id": 10
+      }
+    ],
+    "aws": [
+      {
+        "name": "Amazon EC2",
+        "id": 1
+      },
+      {
+        "name": "Amazon RDS",
+        "id": 2
+      },
+      {
+        "name": "Amazon Simple Storage Service (S3)",
+        "id": 3
+      },
+      {
+        "name": "Amazon CloudFront",
+        "id": 4
+      },
+      {
+        "name": "Amazon VPC",
+        "id": 5
+      },
+      {
+        "name": "Amazon SNS",
+        "id": 6
+      },
+      {
+        "name": "AWS Beanstalk",
+        "id": 7
+      },
+      {
+        "name": "AWS Lambda",
+        "id": 8
+      },
+      {
+        "name": "AWS Autoscaling",
+        "id": 9
+      },
+      {
+        "name": "AWS IAM",
+        "id": 10
+      }
+    ],
+    "azure": [
+      {
+        "name": "Azure Active Directory",
+        "id": 1
+      },
+      {
+        "name": "Azure CDN",
+        "id": 2
+      },
+      {
+        "name": "Azure Data Factory",
+        "id": 3
+      },
+      {
+        "name": "Azure SQL",
+        "id": 4
+      },
+      {
+        "name": "Azure Function",
+        "id": 5
+      },
+      {
+        "name": "CosmosDB",
+        "id": 6
+      },
+      {
+        "name": "DevOps",
+        "id": 7
+      },
+      {
+        "name": "Azure Backup",
+        "id": 8
+      },
+      {
+        "name": "Logic Apps",
+        "id": 9
+      },
+      {
+        "name": "Virtual Machine",
+        "id": 10
+      }
+    ]
+  }
+}
