@@ -8,7 +8,7 @@ import {
   Badge,
   Button,
 } from "react-bootstrap";
-import axios from "axios";
+import Axios from "axios";
 import "./App.css";
 import dataSource from "./dataSource.json";
 
@@ -81,8 +81,32 @@ function App() {
   };
 
   const generateCodeHandler = async () => {
-    window.location.href =
-      "https://api.github.com/repos/hashicorp/terraform/zipball";
+    let payload = [];
+    formData.services.map((data) => {
+      if (data.value) {
+        payload.push(data.value);
+      }
+      return null;
+    });
+    if (payload.length === 0) {
+      payload = ["gcs", "bucket"];
+    }
+    const result = await Axios.post(
+      "https://tfcdgenservice-kcjmvrikkq-uc.a.run.app/list/",
+      payload,
+      {
+        responseType: "blob",
+        headers: { contentType: "application/json" },
+      }
+    );
+    const { data } = result;
+    const blobUrl = new Blob([data], { type: data.type });
+    const downloadUrl = window.URL.createObjectURL(blobUrl);
+    const link = document.createElement("a");
+    link.href = downloadUrl;
+    link.setAttribute("download", "tf.zip");
+    document.body.appendChild(link);
+    link.click();
   };
 
   return (

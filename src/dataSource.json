@@ -21,44 +21,54 @@
   "serviceList": {
     "gcp": [
       {
-        "name": "Networking: Google Virtual Private Cloud (VPC)",
-        "id": 1
+        "name": "Project",
+        "id": 1,
+        "value": "project"
       },
       {
-        "name": "Networking: Content Delivery Network",
-        "id": 2
+        "name": "Virtual Private Cloud (VPC)",
+        "id": 2,
+        "value": "vpc"
       },
       {
-        "name": "Storage and Databases: Cloud SQL",
-        "id": 3
+        "name": "Compute Engine",
+        "id": 3,
+        "value": "gce"
       },
       {
-        "name": "Storage and Databases: Cloud Bigtable",
-        "id": 4
+        "name": "Cloud Storage",
+        "id": 4,
+        "value": "gcs"
       },
       {
-        "name": "Big Data: Google BigQuery",
-        "id": 5
+        "name": "Cloud SQL",
+        "id": 5,
+        "value": "cloudsql"
       },
       {
-        "name": "Big Data: Google Cloud Dataproc",
-        "id": 6
+        "name": "Cloud Bigtable",
+        "id": 6,
+        "value": "cloudbigtable"
       },
       {
-        "name": "Machine Learning: Cloud Machine Learning",
-        "id": 7
+        "name": "BigQuery",
+        "id": 7,
+        "value": "bigquery"
       },
       {
-        "name": "Machine Learning: Vision API",
-        "id": 8
+        "name": "Cloud Dataproc",
+        "id": 8,
+        "value": "clouddataproc"
       },
       {
-        "name": "Developer Tools: Cloud SDK",
-        "id": 9
+        "name": "Cloud Run",
+        "id": 9,
+        "value": "cloudrun"
       },
       {
-        "name": "Developer Tools: Deployment Manager",
-        "id": 10
+        "name": "Cloud Functions",
+        "id": 10,
+        "value": "cloudfunctions"
       }
     ],
     "aws": [
